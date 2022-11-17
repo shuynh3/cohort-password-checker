@@ -1,5 +1,13 @@
 class PasswordChecker
 
+  def initialize(admin: false)
+    @admin = admin
+  end
+
+  def length
+    @admin ? 10 : 7
+  end
+
   def check_password(password)
     check_characters(password) && check_length(password)
   end
@@ -17,6 +25,6 @@ class PasswordChecker
   end
 
   def check_length(password)
-    password.length >= 7 ? true : false
+    password.length >= length ? true : false
   end
 end
