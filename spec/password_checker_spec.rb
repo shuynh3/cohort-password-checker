@@ -10,10 +10,22 @@ RSpec.describe PasswordChecker do
   end
 
   context 'Normal passwords' do
-    it 'fail if password is less than 7 characters' do
+    it 'false if password is less than 7 characters' do
       password = "123456"
       result = @target.check_password(password)
       expect(result).to eq(false)
+    end
+
+    it 'true if password is == 7 characters' do
+      password = "1234567"
+      result = @target.check_password(password)
+      expect(result).to eq(true)
+    end
+
+    it 'true if password is > 7 characters' do
+      password = "12345678"
+      result = @target.check_password(password)
+      expect(result).to eq(true)
     end
   end
 end
