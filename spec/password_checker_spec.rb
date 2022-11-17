@@ -8,44 +8,74 @@ RSpec.describe PasswordChecker do
   after do
     # Do nothing
   end
+  context 'Normal Passwords' do
+    before do
+      @target = described_class.new
+    end
+    context 'length check' do
+      it 'false if password is less than 7 characters' do
+        password = "12345a"
+        result = @target.check_password(password)
+        expect(result).to eq(false)
+      end
 
-  context 'Normal passwords length check' do
-    it 'false if password is less than 7 characters' do
-      password = "12345a"
-      result = @target.check_password(password)
-      expect(result).to eq(false)
+      it 'true if password is == 7 characters' do
+        password = "123456a"
+        result = @target.check_password(password)
+        expect(result).to eq(true)
+      end
+
+      it 'true if password is > 7 characters' do
+        password = "1234567a"
+        result = @target.check_password(password)
+        expect(result).to eq(true)
+      end
     end
 
-    it 'true if password is == 7 characters' do
-      password = "123456a"
-      result = @target.check_password(password)
-      expect(result).to eq(true)
-    end
+    context 'character check' do
+      it 'false if password does not contain letter' do
+        password = "1234567"
+        result = @target.check_password(password)
+        expect(result).to eq(false)
+      end
 
-    it 'true if password is > 7 characters' do
-      password = "1234567a"
-      result = @target.check_password(password)
-      expect(result).to eq(true)
+      it 'false if password does not contain number' do
+        password = "abcdefghi"
+        result = @target.check_password(password)
+        expect(result).to eq(false)
+      end
+
+      it 'true if password contains both' do
+        password = "1234567abc"
+        result = @target.check_password(password)
+        expect(result).to eq(true)
+      end
     end
   end
 
-  context 'Normal passwords character check' do
-    it 'false if password does not contain letter' do
-      password = "1234567"
-      result = @target.check_password(password)
-      expect(result).to eq(false)
+  context 'Admin passwords' do
+    before do
+      @target = described_class.new(admin: true)
     end
 
-    it 'false if password does not contain number' do
-      password = "abcdefghi"
-      result = @target.check_password(password)
-      expect(result).to eq(false)
-    end
+    context 'length check' do
+      it 'false if password is less than 10 characters' do
+        password = "12345678a"
+        result = @target.check_password(password)
+        expect(result).to eq(false)
+      end
 
-    it 'true if password contains both' do
-      password = "1234567abc"
-      result = @target.check_password(password)
-      expect(result).to eq(true)
+      it 'true if password is == 10 characters' do
+        password = "123456789a"
+        result = @target.check_password(password)
+        expect(result).to eq(true)
+      end
+
+      it 'true if password is > 10 characters' do
+        password = "1234567891a"
+        result = @target.check_password(password)
+        expect(result).to eq(true)
+      end
     end
   end
 end
