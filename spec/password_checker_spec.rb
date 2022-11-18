@@ -77,5 +77,31 @@ RSpec.describe PasswordChecker do
         expect(result).to eq(true)
       end
     end
+
+    context 'character check' do
+      it 'false if password does not contain letter' do
+        password = "123456789)"
+        result = @target.check_password(password)
+        expect(result).to eq(false)
+      end
+
+      it 'false if password does not contain number' do
+        password = "abcdefghi)"
+        result = @target.check_password(password)
+        expect(result).to eq(false)
+      end
+
+      it 'false if password does not contain special number' do
+        password = "abcdefghi1"
+        result = @target.check_password(password)
+        expect(result).to eq(false)
+      end
+
+      it 'true if password contains letter, number, special character' do
+        password = "12345678a)"
+        result = @target.check_password(password)
+        expect(result).to eq(true)
+      end
+    end
   end
 end
