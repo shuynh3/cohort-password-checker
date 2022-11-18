@@ -5,261 +5,303 @@ RSpec.describe PasswordChecker do
     @target = described_class.new
   end
 
-  after do
-    # Do nothing
-  end
-  context 'Normal Passwords' do
+  context 'normal users' do
     before do
       @target = described_class.new
     end
-    context 'length check' do
-      it 'false if password is less than 7 characters' do
-        password = "12345a"
-        result = @target.check_password?(password)
+    
+    context 'length' do
+      it 'false if less than 7 characters' do
+        @target.password = "12345a"
+        result = @target.check_password?
         expect(result).to eq(false)
       end
 
-      it 'true if password is == 7 characters' do
-        password = "123456a"
-        result = @target.check_password?(password)
+      it 'true if equal to 7 characters' do
+        @target.password = "123456a"
+        result = @target.check_password?
         expect(result).to eq(true)
       end
 
-      it 'true if password is > 7 characters' do
-        password = "1234567a"
-        result = @target.check_password?(password)
+      it 'true if more than 7 characters' do
+        @target.password = "1234567a"
+        result = @target.check_password?
         expect(result).to eq(true)
       end
     end
 
-    context 'character check' do
-      it 'false if password does not contain letter' do
-        password = "1234567"
-        result = @target.check_password?(password)
+    context 'character' do
+      it 'false if no letter' do
+        @target.password = "1234567"
+        result = @target.check_password?
         expect(result).to eq(false)
       end
 
-      it 'false if password does not contain number' do
-        password = "abcdefghi"
-        result = @target.check_password?(password)
+      it 'false if no number' do
+        @target.password = "abcdefghi"
+        result = @target.check_password?
         expect(result).to eq(false)
       end
 
-      it 'true if password contains both' do
-        password = "1234567abc"
-        result = @target.check_password?(password)
+      it 'true if letter and number' do
+        @target.password = "1234567abc"
+        result = @target.check_password?
         expect(result).to eq(true)
       end
     end
 
     context 'strength' do
-      it 'does not meet length req' do
-        password = "12345a"
+      it 'length' do
+        @target.password = "12345a"
+        expected_output = "Does not contain 7 characters\n"
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain 7 characters\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output).to_stdout
       end
 
-      it 'does not meet letter req' do
-        password = "1234567"
+      it 'letter' do
+        @target.password = "1234567"
+        expected_output = "Does not contain one letter\n"
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain one letter\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output).to_stdout
       end
 
-      it 'does not meet number req' do
-        password = "abcdefg"
+      it 'number' do
+        @target.password = "abcdefg"
+        expected_output = "Does not contain one number\n"
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain one number\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output).to_stdout
       end
 
-      it 'does not meet letter and number req' do
-        password = "()()()()()()()"
+      it 'letter and number' do
+        @target.password = "()()()()()()()"
+        expected_output = ["Does not contain one letter\n",
+                           "Does not contain one number\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain one letter\nDoes not contain one number\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
       end
 
-      it 'does not meet letter and length req' do
-        password = "123456"
+      it 'length and letter' do
+        @target.password = "123456"
+        expected_output = ["Does not contain 7 characters\n",
+                           "Does not contain one letter\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain 7 characters\nDoes not contain one letter\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
       end
 
-      it 'does not meet number and length req' do
-        password = "abcdef"
+      it 'length and number' do
+        @target.password = "abcdef"
+        expected_output = ["Does not contain 7 characters\n",
+                           "Does not contain one number\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain 7 characters\nDoes not contain one number\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
       end
 
-      it 'does not meet any requirement' do
-        password = ""
+      it 'length, letter, and number' do
+        @target.password = ""
+        expected_output = ["Does not contain 7 characters\n",
+                           "Does not contain one letter\n",
+                           "Does not contain one number\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain 7 characters\nDoes not contain one letter\nDoes not contain one number\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
       end
     end
   end
 
-  context 'Admin passwords' do
+  context 'admin users' do
     before do
-      @target = described_class.new(admin: true)
+      @target = described_class.new admin: true
     end
 
-    context 'length check' do
-      it 'false if password is less than 10 characters' do
-        password = "1234567)a"
-        result = @target.check_password?(password)
+    context 'length' do
+      it 'false if less than 10 characters' do
+        @target.password = "1234567)a"
+        result = @target.check_password?
         expect(result).to eq(false)
       end
 
-      it 'true if password is == 10 characters' do
-        password = "12345678)a"
-        result = @target.check_password?(password)
+      it 'true if equal to 10 characters' do
+        @target.password = "12345678)a"
+        result = @target.check_password?
         expect(result).to eq(true)
       end
 
-      it 'true if password is > 10 characters' do
-        password = "123456789)a"
-        result = @target.check_password?(password)
+      it 'true if more than 10 characters' do
+        @target.password = "123456789)a"
+        result = @target.check_password?
         expect(result).to eq(true)
       end
     end
 
     context 'character check' do
-      it 'false if password does not contain letter' do
-        password = "123456789)"
-        result = @target.check_password?(password)
+      it 'false if no letter' do
+        @target.password = "123456789)"
+        result = @target.check_password?
         expect(result).to eq(false)
       end
 
-      it 'false if password does not contain number' do
-        password = "abcdefghi)"
-        result = @target.check_password?(password)
+      it 'false if no number' do
+        @target.password = "abcdefghi)"
+        result = @target.check_password?
         expect(result).to eq(false)
       end
 
-      it 'false if password does not contain special number' do
-        password = "abcdefghi1"
-        result = @target.check_password?(password)
+      it 'false if no special number' do
+        @target.password = "abcdefghi1"
+        result = @target.check_password?
         expect(result).to eq(false)
       end
 
-      it 'true if password contains letter, number, special character' do
+      it 'true if letter, number, and special character' do
         special = %w{!@#$%^&*()_+{}\[\]:;'"\/\\?><.,}.sample
-        password = "12345678a!#{special}"
-        result = @target.check_password?(password)
+        @target.password = "12345678a!#{special}"
+        result = @target.check_password?
         expect(result).to eq(true)
       end
     end
 
     context 'strength' do
-      it 'does not meet length req' do
-        password = "12345abc)"
+      it 'length' do
+        @target.password = "12345abc)"
+        expected_output = "Does not contain 10 characters\n"
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain 10 characters\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output).to_stdout
       end
 
-      it 'does not meet letter req' do
-        password = "123456789)"
+      it 'letter' do
+        @target.password = "123456789)"
+        expected_output = "Does not contain one letter\n"
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain one letter\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output).to_stdout
       end
 
-      it 'does not meet number req' do
-        password = "abcdefghi)"
+      it 'number' do
+        @target.password = "abcdefghi)"
+        expected_output = "Does not contain one number\n"
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain one number\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output).to_stdout
       end
 
-      it 'does not meet special req' do
-        password = "1abcdefghi"
+      it 'special' do
+        @target.password = "1abcdefghi"
+        expected_output = "Does not contain one special character\n"
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain one special character\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output).to_stdout
       end
 
-      it 'does not meet letter and number req' do
-        password = "()()()()()()()()"
+      it 'letter and number' do
+        @target.password = "()()()()()()()()"
+        expected_output = ["Does not contain one letter\n",
+                           "Does not contain one number\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain one letter\nDoes not contain one number\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
       end
 
-      it 'does not meet letter and special req' do
-        password = "1234567891"
+      it 'letter and special' do
+        @target.password = "1234567891"
+        expected_output = ["Does not contain one letter\n",
+                           "Does not contain one special character\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain one letter\nDoes not contain one special character\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
       end
 
-      it 'does not meet number and special req' do
-        password = "abcdefghij"
+      it 'number and special' do
+        @target.password = "abcdefghij"
+        expected_output = ["Does not contain one number\n",
+                           "Does not contain one special character\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain one number\nDoes not contain one special character\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
       end
 
-      it 'does not meet letter and length req' do
-        password = "12345678)"
+      it 'length and letter' do
+        @target.password = "12345678)"
+        expected_output = ["Does not contain 10 characters\n",
+                           "Does not contain one letter\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain 10 characters\nDoes not contain one letter\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
       end
 
-      it 'does not meet number and length req' do
-        password = "abcdefgh)"
+      it 'length and number' do
+        @target.password = "abcdefgh)"
+        expected_output = ["Does not contain 10 characters\n",
+                           "Does not contain one number\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain 10 characters\nDoes not contain one number\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
       end
 
-      it 'does not meet special and length req' do
-        password = "1abcdefg"
+      it 'length and special' do
+        @target.password = "1abcdefg"
+        expected_output = ["Does not contain 10 characters\n",
+                           "Does not contain one special character\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain 10 characters\nDoes not contain one special character\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
       end
 
-      it 'does not meet length, letter, number reqs' do
-        password = ")"
+      it 'length, letter, and number' do
+        @target.password = ")"
+        expected_output = ["Does not contain 10 characters\n",
+                           "Does not contain one letter\n",
+                           "Does not contain one number\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain 10 characters\nDoes not contain one letter\nDoes not contain one number\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
         end
 
-      it 'does not meet length, letter, special reqs' do
-        password = "1"
+      it 'length, letter, abd special' do
+        @target.password = "1"
+        expected_output = ["Does not contain 10 characters\n",
+                           "Does not contain one letter\n",
+                           "Does not contain one special character\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain 10 characters\nDoes not contain one letter\nDoes not contain one special character\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
       end
 
-      it 'does not meet length, number, special reqs' do
-        password = "a"
+      it 'length, number, and special' do
+        @target.password = "a"
+        expected_output = ["Does not contain 10 characters\n",
+                           "Does not contain one number\n",
+                           "Does not contain one special character\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain 10 characters\nDoes not contain one number\nDoes not contain one special character\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
       end
 
-      it 'does not meet letter, number, special reqs' do
-        password = "                   "
+      it 'letter, number, and special' do
+        @target.password = "                   "
+        expected_output = ["Does not contain one letter\n",
+                           "Does not contain one number\n",
+                           "Does not contain one special character\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain one letter\nDoes not contain one number\nDoes not contain one special character\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
       end
 
-      it 'does not meet any requirement' do
-        password = ""
+      it 'length, letter, number, and special' do
+        @target.password = ""
+        expected_output = ["Does not contain 10 characters\n",
+                           "Does not contain one letter\n",
+                           "Does not contain one number\n",
+                           "Does not contain one special character\n"]
         expect do
-          @target.check_password?(password)
-        end.to output("Does not contain 10 characters\nDoes not contain one letter\nDoes not contain one number\nDoes not contain one special character\n").to_stdout
+          @target.check_password?
+        end.to output(expected_output.join).to_stdout
       end
     end
   end

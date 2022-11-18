@@ -1,38 +1,40 @@
 class PasswordChecker
+  attr_accessor :password
 
-  def initialize(admin: false)
+  def initialize(admin: false, password: nil)
     @admin = admin
+    @password = password
   end
 
   def length
     @admin ? 10 : 7
   end
 
-  def check_password?(password)
-    length_requirement = check_length? password
-    letter_requirement = check_letter? password
-    number_requirement = check_number? password
-    special_requirement = check_special? password
+  def check_password?
+    length_requirement = check_length?
+    letter_requirement = check_letter?
+    number_requirement = check_number?
+    special_requirement = check_special?
 
     print_strength length_requirement, letter_requirement, number_requirement, special_requirement
 
     length_requirement && letter_requirement && number_requirement && special_requirement
   end
 
-  def check_letter?(password)
+  def check_letter?
     password.count("a-zA-Z") > 0 ? true : false
   end
 
-  def check_number?(password)
+  def check_number?
     password.count("0-9") > 0 ? true : false
   end
 
-  def check_special?(password)
+  def check_special?
     return true unless @admin
     password.match?(/[!@#$%^&*()_+{}\[\]:;'"\/\\?><.,]/)
   end
 
-  def check_length?(password)
+  def check_length?
     password.length >= length ? true : false
   end
 
