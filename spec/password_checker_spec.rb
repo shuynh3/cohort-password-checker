@@ -155,5 +155,112 @@ RSpec.describe PasswordChecker do
         expect(result).to eq(true)
       end
     end
+
+    context 'strength' do
+      it 'does not meet length req' do
+        password = "12345abc)"
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain 10 characters\n").to_stdout
+      end
+
+      it 'does not meet letter req' do
+        password = "123456789)"
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain one letter\n").to_stdout
+      end
+
+      it 'does not meet number req' do
+        password = "abcdefghi)"
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain one number\n").to_stdout
+      end
+
+      it 'does not meet special req' do
+        password = "1abcdefghi"
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain one special character\n").to_stdout
+      end
+
+      it 'does not meet letter and number req' do
+        password = "()()()()()()()()"
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain one letter\nDoes not contain one number\n").to_stdout
+      end
+
+      it 'does not meet letter and special req' do
+        password = "1234567891"
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain one letter\nDoes not contain one special character\n").to_stdout
+      end
+
+      it 'does not meet number and special req' do
+        password = "abcdefghi"
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain one number\nDoes not contain one special character\n").to_stdout
+      end
+
+      it 'does not meet letter and length req' do
+        password = "12345678)"
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain 10 characters\nDoes not contain one letter\n").to_stdout
+      end
+
+      it 'does not meet number and length req' do
+        password = "abcdefgh)"
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain 10 characters\nDoes not contain one number\n").to_stdout
+      end
+
+      it 'does not meet special and length req' do
+        password = "1abcdefg)"
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain 10 characters\nDoes not contain one special character\n").to_stdout
+      end
+
+      it 'does not meet length, letter, number reqs' do
+        password = ")"
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain 10 characters\nDoes not contain one letter\nDoes not contain one number\n").to_stdout
+        end
+
+      it 'does not meet length, letter, special reqs' do
+        password = "1"
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain 10 characters\nDoes not contain one letter\nDoes not contain one special character\n").to_stdout
+      end
+
+      it 'does not meet length, number, special reqs' do
+        password = "a"
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain 10 characters\nDoes not contain one number\nDoes not contain one special character\n").to_stdout
+      end
+
+      it 'does not meet letter, number, special reqs' do
+        password = "................................"
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain one letter\nDoes not contain one number\nDoes not contain one special character\n").to_stdout
+      end
+
+      it 'does not meet any requirement' do
+        password = ""
+        expect do
+          @target.check_password?(password)
+        end.to output("Does not contain 10 characters\nDoes not contain one letter\nDoes not contain one number\nDoes not contain one special character\n").to_stdout
+      end
+    end
   end
 end
