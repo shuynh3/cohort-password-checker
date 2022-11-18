@@ -200,7 +200,7 @@ RSpec.describe PasswordChecker do
       end
 
       it 'does not meet number and special req' do
-        password = "abcdefghi"
+        password = "abcdefghij"
         expect do
           @target.check_password?(password)
         end.to output("Does not contain one number\nDoes not contain one special character\n").to_stdout
@@ -221,7 +221,7 @@ RSpec.describe PasswordChecker do
       end
 
       it 'does not meet special and length req' do
-        password = "1abcdefg)"
+        password = "1abcdefg"
         expect do
           @target.check_password?(password)
         end.to output("Does not contain 10 characters\nDoes not contain one special character\n").to_stdout
@@ -249,7 +249,7 @@ RSpec.describe PasswordChecker do
       end
 
       it 'does not meet letter, number, special reqs' do
-        password = "................................"
+        password = "                   "
         expect do
           @target.check_password?(password)
         end.to output("Does not contain one letter\nDoes not contain one number\nDoes not contain one special character\n").to_stdout
