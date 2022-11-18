@@ -51,6 +51,57 @@ RSpec.describe PasswordChecker do
         expect(result).to eq(true)
       end
     end
+
+    context 'strength' do
+      it 'does not meet length req' do
+        password = "12345a"
+        expect do
+          @target.check_password(password)
+        end.to output('Does not contain 7 characters').to_stdout
+      end
+
+      it 'does not meet letter req' do
+        password = "1234567"
+        expect do
+          @target.check_password(password)
+        end.to output('Does not contain one letter').to_stdout
+      end
+
+      it 'does not meet number req' do
+        password = "abcdefg"
+        expect do
+          @target.check_password(password)
+        end.to output('Does not contain one number').to_stdout
+      end
+
+      it 'does not meet letter and number req' do
+        password = "abcdefg"
+        expect do
+          @target.check_password(password)
+        end.to output('Does not contain one letter\nDoes not contain one number').to_stdout
+      end
+
+      it 'does not meet letter and length req' do
+        password = "123456"
+        expect do
+          @target.check_password(password)
+        end.to output('Does not contain 7 characters\nDoes not contain one letter').to_stdout
+      end
+
+      it 'does not meet number and length req' do
+        password = "abcdef"
+        expect do
+          @target.check_password(password)
+        end.to output('Does not contain 7 characters\nDoes not contain one number').to_stdout
+      end
+
+      it 'does not meet any requirement' do
+        password = ""
+        expect do
+          @target.check_password(password)
+        end.to output('Does not contain 7 characters\nDoes not contain one letter\nDoes not contain one number').to_stdout
+      end
+    end
   end
 
   context 'Admin passwords' do
