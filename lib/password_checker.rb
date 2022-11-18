@@ -9,7 +9,8 @@ class PasswordChecker
   end
 
   def check_password(password)
-    check_characters(password) && check_length(password)
+    result = check_characters(password) && check_length(password)
+    @admin ? result && check_special(password) : result
   end
 
   def check_characters(password)
@@ -22,6 +23,10 @@ class PasswordChecker
 
   def check_number(password)
     password.count("0-9") > 0 ? true : false
+  end
+
+  def check_special(password)
+    password.match?(/[!@#$%^&*()_+{}\[\]:;'"\/\\?><.,]/)
   end
 
   def check_length(password)

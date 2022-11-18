@@ -60,19 +60,19 @@ RSpec.describe PasswordChecker do
 
     context 'length check' do
       it 'false if password is less than 10 characters' do
-        password = "12345678a"
+        password = "1234567)a"
         result = @target.check_password(password)
         expect(result).to eq(false)
       end
 
       it 'true if password is == 10 characters' do
-        password = "123456789a"
+        password = "12345678)a"
         result = @target.check_password(password)
         expect(result).to eq(true)
       end
 
       it 'true if password is > 10 characters' do
-        password = "1234567891a"
+        password = "123456789)a"
         result = @target.check_password(password)
         expect(result).to eq(true)
       end
@@ -98,7 +98,8 @@ RSpec.describe PasswordChecker do
       end
 
       it 'true if password contains letter, number, special character' do
-        password = "12345678a)"
+        special = %w{!@#$%^&*()_+{}\[\]:;'"\/\\?><.,}.sample
+        password = "12345678a!#{special}"
         result = @target.check_password(password)
         expect(result).to eq(true)
       end
